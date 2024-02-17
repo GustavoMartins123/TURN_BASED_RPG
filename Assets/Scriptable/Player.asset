@@ -31,3 +31,6 @@ MonoBehaviour:
   Team:
   - {fileID: 11400000}
   - {fileID: 11400000}
+  - {fileID: 11400000, guid: 14b893c43f5bc3940a3c45c71d6511c8, type: 2}
+  VisualObject: {fileID: 1083757660018995806, guid: 5d9ac626f896ea740a3fe15d2958559b,
+    type: 3}

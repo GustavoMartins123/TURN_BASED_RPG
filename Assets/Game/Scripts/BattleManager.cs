@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace RPG.GAME
@@ -8,16 +9,14 @@ namespace RPG.GAME
     {
         private CharacterCollisionEventArgs characters;
         private List<CharacterBase> characters_list = new();
-        public CharacterBase currentTarget;
-        public bool selectedEnemy = false;
-        //private CharacterBase currentSelectedForAction;
         private bool playerTurn;
+        
+        private Transform[] grid;
 
-        public BattleManager(CharacterCollisionEventArgs characters, bool playerTurn)
+        public BattleManager(CharacterCollisionEventArgs characters, bool playerTurn, Transform[] grid)
         {
             this.characters = characters;
-            //this.currentTarget = currentTarget;
-            this.playerTurn = playerTurn;
+            this.grid = grid;
             for (int i = 0; i < characters.playerCharacter.Team.Count; i++)
             {
                 characters_list.Add(characters.playerCharacter.Team[i]);
@@ -26,9 +25,18 @@ namespace RPG.GAME
             {
                 characters_list.Add(characters.enemyCharacter.Team[i]);
             }
-            GameManager.Instance.currentSelectedForAction = playerTurn ? characters.playerCharacter.GetHighSpeed() : characters.enemyCharacter.GetHighSpeed();
-            selectedEnemy = GameManager.Instance.currentSelectedForAction == characters.playerCharacter? true : false;
-            GameManager.Instance.currentTarget = !selectedEnemy? currentTarget = characters.playerCharacter.Team[0] : characters.enemyCharacter.Team[0];
+            GameManager.Instance.currentSelectedForAction = playerTurn ? this.characters.playerCharacter.GetHighSpeed() : this.characters.enemyCharacter.GetHighSpeed();
+
+            CharacterBase selectedEnemy = GameManager.Instance.currentSelectedForAction;
+            if (this.characters.enemyCharacter.Team.Contains(selectedEnemy))
+            {
+                GameManager.Instance.currentTarget = this.characters.playerCharacter.Team[0];
+            }
+            else
+            {
+                GameManager.Instance.currentTarget = this.characters.enemyCharacter.Team[0];
+            }
+
         }
 
         public void TakeAction(CharacterBase target, ActionType action)
@@ -41,7 +49,6 @@ namespace RPG.GAME
                 VerifyCurrentTargetActions(currentAttacking);
                 return;
             }
-            //currentTarget = target;
             for (int i = 0; i < characters_list.Count; i++)
             {
                 if (characters_list[i] == currentAttacking)
@@ -73,6 +80,33 @@ namespace RPG.GAME
             }
             //Notifies that the turn has passed, or the character's turn has passed
             return;
+        }
+
+        public void PlaceCharactersOnGrid()
+        {
+            int playerCount = characters.playerCharacter.Team.Count;
+            int enemyStartIndex = playerCount;
+
+            for (int i = 0; i < characters_list.Count; i++)
+            {
+                //Working on this, because the main characters will not instantiate, just reposition
+                if (i < playerCount)
+                {
+                    InstantiateObject.InstantiateObjects(characters_list[i].VisualObject, grid[i].position);
+                }
+                else
+                {
+                    InstantiateObject.InstantiateObjects(characters_list[i].VisualObject, grid[i + enemyStartIndex].position);
+                }
+            }
+        }
+    }
+
+    public class InstantiateObject: MonoBehaviour
+    {
+        public static void InstantiateObjects(GameObject gameObject, Vector3 pos)
+        {
+            Instantiate(gameObject, pos, Quaternion.identity);
         }
     }
 }

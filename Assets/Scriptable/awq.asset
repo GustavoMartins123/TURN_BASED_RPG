@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2ce2174d3f4d65e42a9182567fab4d2a, type: 3}
-  m_Name: wor
+  m_Name: awq
   m_EditorClassIdentifier: 
-  _name: Enemy
-  m_Type: 1
+  _name: P
+  m_Type: 0
   m_Lvl: 0
   m_Hp: 0
   m_Mp: 0
@@ -26,11 +26,6 @@ MonoBehaviour:
   m_Strenght: 0
   m_Intelligence: 0
   m_Resilience: 0
-  m_Speed: 20
+  m_Speed: 222
   action_Released: 0
-  Team:
-  - {fileID: 11400000}
-  - {fileID: 11400000}
-  - {fileID: 11400000}
-  VisualObject: {fileID: 6289877292328147943, guid: 45ce95a2049809741a5353b1377067b3,
-    type: 3}
+  Team: []

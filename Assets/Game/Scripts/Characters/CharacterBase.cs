@@ -39,7 +39,8 @@ namespace RPG.GAME
         public byte m_Resilience;
         public byte m_Speed;
         public bool action_Released = false;
-        public List<CharacterBase> Team = new List<CharacterBase>();
+        public List<CharacterBase> Team = new();
+        public GameObject VisualObject;
 
         public void PerformAction(CharacterBase target, ActionType action)
         {
