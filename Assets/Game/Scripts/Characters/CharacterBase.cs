@@ -1,18 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 namespace RPG.GAME
 {
-    public enum ActionType
-    {
-        PhysicalAttack,
-        MagicalAttack,
-        Defense,
-        None
-    }
-    [CreateAssetMenu(fileName ="Character", menuName = "New Character")]
-    public class CharacterBase: ScriptableObject
+    public class CharacterBase: MonoBehaviour
     {
         public string _name;
         public enum TypeOfCharacter
@@ -39,29 +32,11 @@ namespace RPG.GAME
         public byte m_Resilience;
         public byte m_Speed;
         public bool action_Released = false;
-        public List<CharacterBase> Team = new();
-        public GameObject VisualObject;
 
-        public void PerformAction(CharacterBase target, ActionType action)
-        {
-            switch (action)
-            {
-                case ActionType.PhysicalAttack:
-                    m_Dmg = Mathf.RoundToInt(m_Attack - (target.m_Pdf / 2) + Random.Range(-3, 3) + m_Strenght/5 - target.m_Resilience/7);
-                    int finalDmg = Mathf.Max(m_Dmg, 1);
-                    target.m_Hp -= finalDmg;
-                    break;
-                case ActionType.MagicalAttack:
-                    
-                    break;
-                case ActionType.Defense:
-                    
-                    break;
-                case ActionType.None: 
-                    
-                    break;
-            }
-        }
+        public List<CharacterBase> Team = new();
+        //Probrably i will switch this for playerbattleActions and EnemyAi, because this is for only tests
+        public GameObject[] VisualObject;
+        
 
         public CharacterBase GetHighSpeed()
         {
@@ -77,10 +52,20 @@ namespace RPG.GAME
                         maxSpeed = character.m_Speed;
                         highestSpeedCharacter = character;
                     }
+                    if(highestSpeedCharacter == null)
+                    {
+                        highestSpeedCharacter = character;
+                    }
                 }
             }
 
             return highestSpeedCharacter;
         }
+
+        public List<CharacterBase> GetTeam()
+        {
+            return Team;
+        }
     }
+    
 }

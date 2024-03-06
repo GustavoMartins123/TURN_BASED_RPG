@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -5,40 +6,43 @@ using UnityEngine;
 
 namespace RPG.GAME
 {
-    public class BattleManager
+    sealed class BattleManager: IAction
     {
         private CharacterCollisionEventArgs characters;
         private List<CharacterBase> characters_list = new();
         private bool playerTurn;
+        [SerializeField] CinemachineVirtualCamera cameraBattle;
         
         private Transform[] grid;
 
-        public BattleManager(CharacterCollisionEventArgs characters, bool playerTurn, Transform[] grid)
+        public BattleManager(CharacterCollisionEventArgs characters, bool playerTurn, Transform[] grid, CinemachineVirtualCamera virtualCamera)
         {
             this.characters = characters;
             this.grid = grid;
-            for (int i = 0; i < characters.playerCharacter.Team.Count; i++)
+            characters_list.Add(characters.playerCharacter);
+            characters_list.Add(characters.enemyCharacter);
+            foreach(CharacterBase character in characters_list)
             {
-                characters_list.Add(characters.playerCharacter.Team[i]);
+                Debug.Log(character.name);
             }
-            for (int i = 0; i < characters.enemyCharacter.Team.Count; i++)
-            {
-                characters_list.Add(characters.enemyCharacter.Team[i]);
-            }
-            GameManager.Instance.currentSelectedForAction = playerTurn ? this.characters.playerCharacter.GetHighSpeed() : this.characters.enemyCharacter.GetHighSpeed();
 
-            CharacterBase selectedEnemy = GameManager.Instance.currentSelectedForAction;
-            if (this.characters.enemyCharacter.Team.Contains(selectedEnemy))
+            GameManager.Instance.currentSelectedForAction = playerTurn ? this.characters.playerCharacter.GetHighSpeed() : this.characters.enemyCharacter.GetHighSpeed();
+            CharacterBase selectedForAction = GameManager.Instance.currentSelectedForAction;
+
+            CharacterBase selectedEnemy = selectedForAction;
+            if (this.characters.enemyCharacter.GetTeam().Contains(selectedEnemy))
             {
-                GameManager.Instance.currentTarget = this.characters.playerCharacter.Team[0];
+                GameManager.Instance.currentTarget = this.characters.playerCharacter.GetTeam()[0];
             }
             else
             {
-                GameManager.Instance.currentTarget = this.characters.enemyCharacter.Team[0];
+                GameManager.Instance.currentTarget = this.characters.enemyCharacter.GetTeam()[0];
             }
+
 
         }
 
+        //Switch this, and use IAction please
         public void TakeAction(CharacterBase target, ActionType action)
         {
             //In the combat system under development, currently, even with multiple characters on the team, only one of them needs to take an action for the turn to be changed. However, this behavior will be modified in the future.
@@ -49,21 +53,21 @@ namespace RPG.GAME
                 VerifyCurrentTargetActions(currentAttacking);
                 return;
             }
-            for (int i = 0; i < characters_list.Count; i++)
+            /*for (int i = 0; i < characters_list.Count; i++)
             {
                 if (characters_list[i] == currentAttacking)
                 {
-                    characters_list[i].PerformAction(target, action);
+                    //characters_list[i].PerformAction(target, action);
                     break;
                 }
-            }
+            }*/
         }
 
         private void VerifyCurrentTargetActions(CharacterBase currentAttacking)
         {
             bool allTrue = true;
             List<CharacterBase> team = (currentAttacking == characters.enemyCharacter) ?
-                characters.enemyCharacter.Team : characters.playerCharacter.Team;
+                characters.enemyCharacter.GetTeam() : characters.playerCharacter.GetTeam();
             for (int i = 0; i < team.Count; i++)
             {
                 if (team[i].action_Released == false)
@@ -85,20 +89,21 @@ namespace RPG.GAME
         public void PlaceCharactersOnGrid()
         {
             int playerCount = characters.playerCharacter.Team.Count;
-            int enemyStartIndex = playerCount;
-
-            for (int i = 0; i < characters_list.Count; i++)
+            int enemyStartIndex = grid.Length / 2;
+            for (int i = 0; i < playerCount; i++)
             {
-                //Working on this, because the main characters will not instantiate, just reposition
-                if (i < playerCount)
-                {
-                    InstantiateObject.InstantiateObjects(characters_list[i].VisualObject, grid[i].position);
-                }
-                else
-                {
-                    InstantiateObject.InstantiateObjects(characters_list[i].VisualObject, grid[i + enemyStartIndex].position);
-                }
+                InstantiateObject.InstantiateObjects(characters.playerCharacter.VisualObject[i], grid[i].position);
             }
+            for (int j = 0; j < characters.enemyCharacter.Team.Count; j++)
+            {
+                int enemyGridIndex = enemyStartIndex + j;
+                InstantiateObject.InstantiateObjects(characters.enemyCharacter.VisualObject[j], grid[enemyGridIndex].position);
+            }
+        }
+
+        public void PerformAction(CharacterBase currentSelectedForAction, CharacterBase target, ActionType action)
+        {
+            throw new System.NotImplementedException();
         }
     }
 

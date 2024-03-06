@@ -1,20 +1,22 @@
+using Cinemachine;
 using RPG.GAME;
 using System;
 using System.Collections;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+sealed class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     public EventHandler onTurnHasChanged;
     [SerializeField] private Player player;
-    [SerializeField] private CharacterMovement character;
+    [SerializeField] private CharacterMovement characterMovement;
     [SerializeField] private bool playerTurn;
     public CharacterBase currentTarget, currentSelectedForAction;
     private BattleManager battleManager;
     [SerializeField] private Material twirlMaterial;
     [SerializeField] private GameObject screenDistortion;
     [SerializeField] private Camera cameraDistortion;
+    [SerializeField] private CinemachineVirtualCamera cameraBattle; 
     float time = 0;
     [SerializeField] private Transform[] grid;
 
@@ -32,7 +34,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        character.onEnterInBattle += Player_OnEnterInBattle;
+        characterMovement.onEnterInBattle += Player_OnEnterInBattle;
         //twirlMaterial.SetFloat("_RotateSpeed", 0);
         //twirlMaterial.SetFloat("_TwirlStrenght", 0);
     }
@@ -56,12 +58,12 @@ public class GameManager : MonoBehaviour
     {
         playerTurn = e.playerCharacter.GetHighSpeed().m_Speed >= e.enemyCharacter.GetHighSpeed().m_Speed ? true : false;
         Debug.Log(playerTurn);
-        battleManager = new BattleManager(e, playerTurn, grid);
+        battleManager = new BattleManager(e, playerTurn, grid, cameraBattle);
         player.BattleInit();
-        Debug.Log("Batalha iniciada entre " + e.playerCharacter._name + " e " + e.enemyCharacter._name);
         Debug.Log($"O target atual é {currentTarget}");
         Debug.Log($"A vez é do {currentSelectedForAction}");
         battleManager.PlaceCharactersOnGrid();
+        cameraBattle.Follow = currentSelectedForAction.transform;
     }
 
     public bool GetCurrentTurn()

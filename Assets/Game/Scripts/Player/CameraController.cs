@@ -7,10 +7,10 @@ namespace RPG.GAME
 {
     public class CameraController : MonoBehaviour
     {
-        public CharacterMovement characterMovement;
+        [SerializeField] private CharacterMovement characterMovement;
         public Transform target;
-        public float targetHeight = 1.9f;
-        public Vector2 xRotationRange = new Vector2(-70, 70);
+        [SerializeField] private float targetHeight = 1.9f;
+        [SerializeField] private Vector2 xRotationRange = new Vector2(-70, 70);
 
 
         private Vector2 targetLook;

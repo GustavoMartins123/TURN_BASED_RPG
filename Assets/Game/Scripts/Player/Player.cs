@@ -2,16 +2,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem.XR;
 
 namespace RPG.GAME
 {
-    public class Player : MonoBehaviour
+    public class Player : CharacterBase
     {
-        [SerializeField] List<CharacterBase> partners = new();
+        
         [SerializeField] private CharacterMovement characterMovement;
         [SerializeField] private CameraController cameraController;
-        public CharacterBase character;
+        
 
         private PlayerController inputActions;
 
@@ -19,11 +18,6 @@ namespace RPG.GAME
         {
             inputActions = new PlayerController();
             inputActions.Enable();
-        }
-
-        private void Start()
-        {
-            character.Team = partners;
         }
 
         private void Update()
@@ -56,15 +50,16 @@ namespace RPG.GAME
             Ray ray = Camera.main.ScreenPointToRay(mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, 1<<8))
             {
-                GameManager.Instance.currentTarget = hit.collider.GetComponent<Enemy>().character;
+                GameManager.Instance.currentTarget = hit.collider.GetComponent<CharacterBase>();
                 Debug.Log(hit.collider.name);
             }
             else
             {
-                Debug.Log(hit.transform.name);
                 return;
             }
         }
+
+        
 
         public void BattleInit()
         {

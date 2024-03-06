@@ -108,10 +108,10 @@ namespace RPG.GAME
         {
             if (hitCollider.CompareTag("Enemy"))
             {
-                CharacterBase enemyCharacter = hitCollider.GetComponent<Enemy>().character;
+                Enemy enemyCharacter = hitCollider.GetComponent<Enemy>();
                 if (enemyCharacter != null)
                 {
-                    onEnterInBattle?.Invoke(this, new CharacterCollisionEventArgs(player.character, enemyCharacter));
+                    onEnterInBattle?.Invoke(this, new CharacterCollisionEventArgs(player, enemyCharacter));
                 }
             }
         }
@@ -158,11 +158,10 @@ namespace RPG.GAME
 
     public class CharacterCollisionEventArgs : EventArgs
     {
-        public CharacterBase playerCharacter;
-        public CharacterBase enemyCharacter;
+        public Player playerCharacter;
+        public Enemy enemyCharacter;
 
-
-        public CharacterCollisionEventArgs(CharacterBase player, CharacterBase enemy)
+        public CharacterCollisionEventArgs(Player player, Enemy enemy)
         {
             playerCharacter = player;
             enemyCharacter = enemy;

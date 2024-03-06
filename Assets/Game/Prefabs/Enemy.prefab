@@ -123,5 +123,4 @@ MonoBehaviour:
   partners:
   - {fileID: 11400000, guid: 14b893c43f5bc3940a3c45c71d6511c8, type: 2}
   - {fileID: 11400000, guid: 14b893c43f5bc3940a3c45c71d6511c8, type: 2}
-  - {fileID: 11400000, guid: 14b893c43f5bc3940a3c45c71d6511c8, type: 2}
   character: {fileID: 11400000, guid: 14b893c43f5bc3940a3c45c71d6511c8, type: 2}
