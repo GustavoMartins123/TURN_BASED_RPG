@@ -1,7 +1,4 @@
-using Cinemachine;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace RPG.GAME
@@ -11,58 +8,80 @@ namespace RPG.GAME
         private CharacterCollisionEventArgs characters;
         private List<CharacterBase> characters_list = new();
         private bool playerTurn;
-        [SerializeField] CinemachineVirtualCamera cameraBattle;
-        
-        private Transform[] grid;
+        private CameraController cameraBattle;
 
-        public BattleManager(CharacterCollisionEventArgs characters, bool playerTurn, Transform[] grid, CinemachineVirtualCamera virtualCamera)
+        public BattleManager(CharacterCollisionEventArgs characters, CameraController cameraBattle)
         {
             this.characters = characters;
-            this.grid = grid;
-            characters_list.Add(characters.playerCharacter);
-            characters_list.Add(characters.enemyCharacter);
-            foreach(CharacterBase character in characters_list)
+            this.cameraBattle = cameraBattle;
+            characters_list.Add(this.characters.playerCharacter);
+            characters_list.Add(this.characters.enemyCharacter);
+
+        }
+
+        public void PlaceCharactersOnGrid(bool playerTurn,Transform[] grid)
+        {
+            int playerCount = characters.playerCharacter.Team.Count;
+            int enemyStartIndex = grid.Length/2;
+            this.playerTurn = playerTurn;
+
+            
+            for (int i = 0; i < playerCount; i++)
             {
-                Debug.Log(character.name);
+                characters.playerCharacter.Team[i].transform.position = grid[i].position;
+            }
+            for (int j = 0; j < characters.enemyCharacter.Team.Count; j++)
+            {
+                int enemyGridIndex = enemyStartIndex + j;
+                characters.enemyCharacter.Team[j].transform.position = grid[enemyGridIndex].position;
             }
 
-            GameManager.Instance.currentSelectedForAction = playerTurn ? this.characters.playerCharacter.GetHighSpeed() : this.characters.enemyCharacter.GetHighSpeed();
-            CharacterBase selectedForAction = GameManager.Instance.currentSelectedForAction;
+            GameManager.Instance.currentSelectedForAction = this.playerTurn ? characters.playerCharacter.GetHighSpeed() : characters.enemyCharacter.GetHighSpeed();
 
-            CharacterBase selectedEnemy = selectedForAction;
-            if (this.characters.enemyCharacter.GetTeam().Contains(selectedEnemy))
+            CharacterBase currentSelectedForAction = GameManager.Instance.currentSelectedForAction;
+
+            cameraBattle.target.position = currentSelectedForAction.transform.position;
+
+            if (this.characters.enemyCharacter.GetTeam().Contains(currentSelectedForAction))
             {
-                GameManager.Instance.currentTarget = this.characters.playerCharacter.GetTeam()[0];
+                GameManager.Instance.currentTarget = characters.playerCharacter.GetHighSpeed();
             }
             else
             {
-                GameManager.Instance.currentTarget = this.characters.enemyCharacter.GetTeam()[0];
+                GameManager.Instance.currentTarget = characters.enemyCharacter.GetHighSpeed();
             }
 
-
+            
         }
 
-        //Switch this, and use IAction please
-        public void TakeAction(CharacterBase target, ActionType action)
+        public void PerformAction(CharacterBase currentSelectedForAction, CharacterBase target, ActionType action)
         {
-            //In the combat system under development, currently, even with multiple characters on the team, only one of them needs to take an action for the turn to be changed. However, this behavior will be modified in the future.
-            CharacterBase currentAttacking = GameManager.Instance.currentSelectedForAction;
-            currentAttacking.action_Released = true;
-            if(action == ActionType.None)
+            currentSelectedForAction.action_Released = true;
+            switch(action)
             {
-                VerifyCurrentTargetActions(currentAttacking);
-                return;
-            }
-            /*for (int i = 0; i < characters_list.Count; i++)
-            {
-                if (characters_list[i] == currentAttacking)
-                {
-                    //characters_list[i].PerformAction(target, action);
+                case ActionType.PhysicalAttack:
+                    Debug.Log($"O {currentSelectedForAction.name} está atacando {target}");
+                    cameraBattle.target.transform.position = GameManager.Instance.currentSelectedForAction.transform.position;
                     break;
-                }
-            }*/
+                case ActionType.MagicalAttack:
+
+                    break;
+                case ActionType.Defense:
+
+                    break;
+                default:
+                    PassTurn(currentSelectedForAction);
+                    break;
+
+            }
+            VerifyCurrentTargetActions(currentSelectedForAction);
         }
 
+        private void PassTurn(CharacterBase selectedForAction)
+        {
+            cameraBattle.target.transform.position = selectedForAction.transform.position;
+        }
+        //Doesnt work now, working to fix
         private void VerifyCurrentTargetActions(CharacterBase currentAttacking)
         {
             bool allTrue = true;
@@ -80,38 +99,10 @@ namespace RPG.GAME
             if (allTrue)
             {
                 playerTurn = !playerTurn;
-                GameManager.Instance.PassTurn();
+                PassTurn(GameManager.Instance.currentSelectedForAction);
             }
             //Notifies that the turn has passed, or the character's turn has passed
             return;
-        }
-
-        public void PlaceCharactersOnGrid()
-        {
-            int playerCount = characters.playerCharacter.Team.Count;
-            int enemyStartIndex = grid.Length / 2;
-            for (int i = 0; i < playerCount; i++)
-            {
-                InstantiateObject.InstantiateObjects(characters.playerCharacter.VisualObject[i], grid[i].position);
-            }
-            for (int j = 0; j < characters.enemyCharacter.Team.Count; j++)
-            {
-                int enemyGridIndex = enemyStartIndex + j;
-                InstantiateObject.InstantiateObjects(characters.enemyCharacter.VisualObject[j], grid[enemyGridIndex].position);
-            }
-        }
-
-        public void PerformAction(CharacterBase currentSelectedForAction, CharacterBase target, ActionType action)
-        {
-            throw new System.NotImplementedException();
-        }
-    }
-
-    public class InstantiateObject: MonoBehaviour
-    {
-        public static void InstantiateObjects(GameObject gameObject, Vector3 pos)
-        {
-            Instantiate(gameObject, pos, Quaternion.identity);
         }
     }
 }

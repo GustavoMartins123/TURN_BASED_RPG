@@ -2,12 +2,12 @@ using Cinemachine;
 using RPG.GAME;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 sealed class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-    public EventHandler onTurnHasChanged;
     [SerializeField] private Player player;
     [SerializeField] private CharacterMovement characterMovement;
     [SerializeField] private bool playerTurn;
@@ -15,10 +15,19 @@ sealed class GameManager : MonoBehaviour
     private BattleManager battleManager;
     [SerializeField] private Material twirlMaterial;
     [SerializeField] private GameObject screenDistortion;
+    /// <summary>
+    /// ///////////////////////////////////////////////////////
+    /// </summary>
+    [SerializeField] private CharacterBase enemy;/// <summary>
+    /// //////////////////////////////////////////////////////
+    /// </summary>
     [SerializeField] private Camera cameraDistortion;
-    [SerializeField] private CinemachineVirtualCamera cameraBattle; 
+    [SerializeField] private CameraController cameraBattle; //Work to set the right target and stay in a good position, it will probably be a targetcamera like the one on the regular player
     float time = 0;
     [SerializeField] private Transform[] grid;
+
+    //Test
+    public float radius = 5f;
 
     private void Awake()
     {
@@ -35,6 +44,8 @@ sealed class GameManager : MonoBehaviour
     void Start()
     {
         characterMovement.onEnterInBattle += Player_OnEnterInBattle;
+        player.onSelectTargetInBattle += Player_OnSelectTargetInBattle;
+        SpawnObjectsInCircle();
         //twirlMaterial.SetFloat("_RotateSpeed", 0);
         //twirlMaterial.SetFloat("_TwirlStrenght", 0);
     }
@@ -48,22 +59,66 @@ sealed class GameManager : MonoBehaviour
         }*///******Study shaders****** 
         // Thinking about how to improve this, because it's very heavy and ugly
     }
+
+    void SpawnObjectsInCircle()
+    {
+        List<CharacterBase> enemyList = new List<CharacterBase>();
+        for (int i = 0; i < 8; i++)
+        {
+            float angle = i * Mathf.PI * 2f / 10;
+
+            float x = Mathf.Cos(angle) * radius;
+            float z = Mathf.Sin(angle) * radius;
+            Vector3 spawnPosition = transform.position + new Vector3(x, 0f, z);
+
+            GameObject enemyObject = Instantiate(this.enemy.gameObject, spawnPosition, Quaternion.identity);
+            CharacterBase enemy = enemyObject.GetComponent<CharacterBase>();
+            enemyList.Add(enemy);
+
+            if (i % 4 == 3)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    int index = (i - j) % enemyList.Count;
+                    enemyList[i].Team.Add(enemyList[index]);
+                    
+                }
+                enemyList[i].Team.Reverse();
+                for (int k = 0; k < 3; k++)
+                {
+                    int previousIndex = (i - k - 1) % enemyList.Count;
+                    enemyList[previousIndex].Team.Clear();
+                    enemyList[previousIndex].Team.AddRange(enemyList[i].Team);
+                }
+            }
+
+        }
+    }
+
     public void PassTurn()
     {
-        battleManager.TakeAction(currentSelectedForAction, ActionType.None);
-        onTurnHasChanged?.Invoke(currentSelectedForAction, EventArgs.Empty);//for camera and UI
+        battleManager.PerformAction(currentSelectedForAction, currentTarget, ActionType.None);
+    }
+
+    public void Attack()
+    {
+        battleManager.PerformAction(currentSelectedForAction, currentTarget, ActionType.PhysicalAttack);
     }
 
     void Player_OnEnterInBattle(object sender, CharacterCollisionEventArgs e)
     {
         playerTurn = e.playerCharacter.GetHighSpeed().m_Speed >= e.enemyCharacter.GetHighSpeed().m_Speed ? true : false;
-        Debug.Log(playerTurn);
-        battleManager = new BattleManager(e, playerTurn, grid, cameraBattle);
+        battleManager = new BattleManager(e, cameraBattle);
         player.BattleInit();
-        Debug.Log($"O target atual é {currentTarget}");
-        Debug.Log($"A vez é do {currentSelectedForAction}");
-        battleManager.PlaceCharactersOnGrid();
-        cameraBattle.Follow = currentSelectedForAction.transform;
+        battleManager.PlaceCharactersOnGrid(playerTurn, grid);
+    }
+
+    //Replace this with a UI action, because now it will be useless, as the camera will move
+    void Player_OnSelectTargetInBattle(object sender, RaycastHit e)
+    {
+        currentTarget = e.collider.GetComponent<CharacterBase>();
+        cameraBattle.target.transform.position = currentTarget.transform.position;
+
     }
 
     public bool GetCurrentTurn()

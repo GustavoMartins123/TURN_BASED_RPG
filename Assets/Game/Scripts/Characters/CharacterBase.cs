@@ -34,10 +34,6 @@ namespace RPG.GAME
         public bool action_Released = false;
 
         public List<CharacterBase> Team = new();
-        //Probrably i will switch this for playerbattleActions and EnemyAi, because this is for only tests
-        public GameObject[] VisualObject;
-        
-
         public CharacterBase GetHighSpeed()
         {
             CharacterBase highestSpeedCharacter = null;

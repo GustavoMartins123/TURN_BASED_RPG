@@ -19,6 +19,7 @@ namespace RPG.GAME
         public EventHandler<CharacterCollisionEventArgs> onEnterInBattle;
         public KinematicCharacterMotor motor;
         [SerializeField] private Player player;
+        [SerializeField] private PlayerBattle playerBattle;
         [SerializeField] private LayerMask enemyLayer;
 
         [Header("Ground Movement")]
@@ -111,7 +112,7 @@ namespace RPG.GAME
                 Enemy enemyCharacter = hitCollider.GetComponent<Enemy>();
                 if (enemyCharacter != null)
                 {
-                    onEnterInBattle?.Invoke(this, new CharacterCollisionEventArgs(player, enemyCharacter));
+                    onEnterInBattle?.Invoke(this, new CharacterCollisionEventArgs(playerBattle, enemyCharacter));
                 }
             }
         }
@@ -158,10 +159,10 @@ namespace RPG.GAME
 
     public class CharacterCollisionEventArgs : EventArgs
     {
-        public Player playerCharacter;
+        public PlayerBattle playerCharacter;
         public Enemy enemyCharacter;
 
-        public CharacterCollisionEventArgs(Player player, Enemy enemy)
+        public CharacterCollisionEventArgs(PlayerBattle player, Enemy enemy)
         {
             playerCharacter = player;
             enemyCharacter = enemy;

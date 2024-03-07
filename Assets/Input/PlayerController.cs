@@ -44,15 +44,6 @@ public partial class @PlayerController: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Look"",
-                    ""type"": ""Value"",
-                    ""id"": ""1adcd10a-ef54-46a4-9f3f-cecf0f6364d7"",
-                    ""expectedControlType"": ""Vector2"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -124,28 +115,6 @@ public partial class @PlayerController: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""33fede25-2760-44c5-a501-e56e802f0e29"",
-                    ""path"": ""<Mouse>/delta"",
-                    ""interactions"": """",
-                    ""processors"": ""ScaleVector2(y=-1)"",
-                    ""groups"": ""KeyBoard"",
-                    ""action"": ""Look"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""f6ae7f8c-1038-476d-93d8-717fc5373568"",
-                    ""path"": ""<Gamepad>/rightStick"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""GamePad"",
-                    ""action"": ""Look"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""b33a1371-3763-49ed-b484-abac23495e41"",
                     ""path"": ""<Keyboard>/space"",
                     ""interactions"": """",
@@ -189,6 +158,15 @@ public partial class @PlayerController: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""OpenBattleScreen"",
+                    ""type"": ""Button"",
+                    ""id"": ""1c2e2ad8-64ee-43f3-82f2-648f94b22d91"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -224,6 +202,56 @@ public partial class @PlayerController: IInputActionCollection2, IDisposable
                     ""action"": ""MouseSelect"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""48c7172e-47ef-4359-9cf7-fc9322adc62b"",
+                    ""path"": ""<Keyboard>/ctrl"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyBoard"",
+                    ""action"": ""OpenBattleScreen"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""PlayerActions_LookCamera"",
+            ""id"": ""396d8d7a-91aa-4b72-b1a9-c102d351ae0e"",
+            ""actions"": [
+                {
+                    ""name"": ""Look"",
+                    ""type"": ""Value"",
+                    ""id"": ""5212abc0-166b-4d5d-af73-2cf7576b01a2"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""8b0c5723-b417-4a0c-80a8-70c50d24d7d7"",
+                    ""path"": ""<Mouse>/delta"",
+                    ""interactions"": """",
+                    ""processors"": ""ScaleVector2(y=-1)"",
+                    ""groups"": ""KeyBoard"",
+                    ""action"": ""Look"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c7e5e639-50f2-4b6d-a24c-e98b10e25172"",
+                    ""path"": ""<Gamepad>/rightStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""GamePad"",
+                    ""action"": ""Look"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -245,11 +273,14 @@ public partial class @PlayerController: IInputActionCollection2, IDisposable
         m_PlayerActions_Move = asset.FindActionMap("PlayerActions_Move", throwIfNotFound: true);
         m_PlayerActions_Move_Move = m_PlayerActions_Move.FindAction("Move", throwIfNotFound: true);
         m_PlayerActions_Move_Jump = m_PlayerActions_Move.FindAction("Jump", throwIfNotFound: true);
-        m_PlayerActions_Move_Look = m_PlayerActions_Move.FindAction("Look", throwIfNotFound: true);
         // PlayerActions_Battle
         m_PlayerActions_Battle = asset.FindActionMap("PlayerActions_Battle", throwIfNotFound: true);
         m_PlayerActions_Battle_MouseSelect = m_PlayerActions_Battle.FindAction("MouseSelect", throwIfNotFound: true);
         m_PlayerActions_Battle_MousePosition = m_PlayerActions_Battle.FindAction("MousePosition", throwIfNotFound: true);
+        m_PlayerActions_Battle_OpenBattleScreen = m_PlayerActions_Battle.FindAction("OpenBattleScreen", throwIfNotFound: true);
+        // PlayerActions_LookCamera
+        m_PlayerActions_LookCamera = asset.FindActionMap("PlayerActions_LookCamera", throwIfNotFound: true);
+        m_PlayerActions_LookCamera_Look = m_PlayerActions_LookCamera.FindAction("Look", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -313,14 +344,12 @@ public partial class @PlayerController: IInputActionCollection2, IDisposable
     private List<IPlayerActions_MoveActions> m_PlayerActions_MoveActionsCallbackInterfaces = new List<IPlayerActions_MoveActions>();
     private readonly InputAction m_PlayerActions_Move_Move;
     private readonly InputAction m_PlayerActions_Move_Jump;
-    private readonly InputAction m_PlayerActions_Move_Look;
     public struct PlayerActions_MoveActions
     {
         private @PlayerController m_Wrapper;
         public PlayerActions_MoveActions(@PlayerController wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_PlayerActions_Move_Move;
         public InputAction @Jump => m_Wrapper.m_PlayerActions_Move_Jump;
-        public InputAction @Look => m_Wrapper.m_PlayerActions_Move_Look;
         public InputActionMap Get() { return m_Wrapper.m_PlayerActions_Move; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -336,9 +365,6 @@ public partial class @PlayerController: IInputActionCollection2, IDisposable
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
-            @Look.started += instance.OnLook;
-            @Look.performed += instance.OnLook;
-            @Look.canceled += instance.OnLook;
         }
 
         private void UnregisterCallbacks(IPlayerActions_MoveActions instance)
@@ -349,9 +375,6 @@ public partial class @PlayerController: IInputActionCollection2, IDisposable
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
-            @Look.started -= instance.OnLook;
-            @Look.performed -= instance.OnLook;
-            @Look.canceled -= instance.OnLook;
         }
 
         public void RemoveCallbacks(IPlayerActions_MoveActions instance)
@@ -375,12 +398,14 @@ public partial class @PlayerController: IInputActionCollection2, IDisposable
     private List<IPlayerActions_BattleActions> m_PlayerActions_BattleActionsCallbackInterfaces = new List<IPlayerActions_BattleActions>();
     private readonly InputAction m_PlayerActions_Battle_MouseSelect;
     private readonly InputAction m_PlayerActions_Battle_MousePosition;
+    private readonly InputAction m_PlayerActions_Battle_OpenBattleScreen;
     public struct PlayerActions_BattleActions
     {
         private @PlayerController m_Wrapper;
         public PlayerActions_BattleActions(@PlayerController wrapper) { m_Wrapper = wrapper; }
         public InputAction @MouseSelect => m_Wrapper.m_PlayerActions_Battle_MouseSelect;
         public InputAction @MousePosition => m_Wrapper.m_PlayerActions_Battle_MousePosition;
+        public InputAction @OpenBattleScreen => m_Wrapper.m_PlayerActions_Battle_OpenBattleScreen;
         public InputActionMap Get() { return m_Wrapper.m_PlayerActions_Battle; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -396,6 +421,9 @@ public partial class @PlayerController: IInputActionCollection2, IDisposable
             @MousePosition.started += instance.OnMousePosition;
             @MousePosition.performed += instance.OnMousePosition;
             @MousePosition.canceled += instance.OnMousePosition;
+            @OpenBattleScreen.started += instance.OnOpenBattleScreen;
+            @OpenBattleScreen.performed += instance.OnOpenBattleScreen;
+            @OpenBattleScreen.canceled += instance.OnOpenBattleScreen;
         }
 
         private void UnregisterCallbacks(IPlayerActions_BattleActions instance)
@@ -406,6 +434,9 @@ public partial class @PlayerController: IInputActionCollection2, IDisposable
             @MousePosition.started -= instance.OnMousePosition;
             @MousePosition.performed -= instance.OnMousePosition;
             @MousePosition.canceled -= instance.OnMousePosition;
+            @OpenBattleScreen.started -= instance.OnOpenBattleScreen;
+            @OpenBattleScreen.performed -= instance.OnOpenBattleScreen;
+            @OpenBattleScreen.canceled -= instance.OnOpenBattleScreen;
         }
 
         public void RemoveCallbacks(IPlayerActions_BattleActions instance)
@@ -423,6 +454,52 @@ public partial class @PlayerController: IInputActionCollection2, IDisposable
         }
     }
     public PlayerActions_BattleActions @PlayerActions_Battle => new PlayerActions_BattleActions(this);
+
+    // PlayerActions_LookCamera
+    private readonly InputActionMap m_PlayerActions_LookCamera;
+    private List<IPlayerActions_LookCameraActions> m_PlayerActions_LookCameraActionsCallbackInterfaces = new List<IPlayerActions_LookCameraActions>();
+    private readonly InputAction m_PlayerActions_LookCamera_Look;
+    public struct PlayerActions_LookCameraActions
+    {
+        private @PlayerController m_Wrapper;
+        public PlayerActions_LookCameraActions(@PlayerController wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Look => m_Wrapper.m_PlayerActions_LookCamera_Look;
+        public InputActionMap Get() { return m_Wrapper.m_PlayerActions_LookCamera; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(PlayerActions_LookCameraActions set) { return set.Get(); }
+        public void AddCallbacks(IPlayerActions_LookCameraActions instance)
+        {
+            if (instance == null || m_Wrapper.m_PlayerActions_LookCameraActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_PlayerActions_LookCameraActionsCallbackInterfaces.Add(instance);
+            @Look.started += instance.OnLook;
+            @Look.performed += instance.OnLook;
+            @Look.canceled += instance.OnLook;
+        }
+
+        private void UnregisterCallbacks(IPlayerActions_LookCameraActions instance)
+        {
+            @Look.started -= instance.OnLook;
+            @Look.performed -= instance.OnLook;
+            @Look.canceled -= instance.OnLook;
+        }
+
+        public void RemoveCallbacks(IPlayerActions_LookCameraActions instance)
+        {
+            if (m_Wrapper.m_PlayerActions_LookCameraActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IPlayerActions_LookCameraActions instance)
+        {
+            foreach (var item in m_Wrapper.m_PlayerActions_LookCameraActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_PlayerActions_LookCameraActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public PlayerActions_LookCameraActions @PlayerActions_LookCamera => new PlayerActions_LookCameraActions(this);
     private int m_KeyBoardSchemeIndex = -1;
     public InputControlScheme KeyBoardScheme
     {
@@ -445,11 +522,15 @@ public partial class @PlayerController: IInputActionCollection2, IDisposable
     {
         void OnMove(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
-        void OnLook(InputAction.CallbackContext context);
     }
     public interface IPlayerActions_BattleActions
     {
         void OnMouseSelect(InputAction.CallbackContext context);
         void OnMousePosition(InputAction.CallbackContext context);
+        void OnOpenBattleScreen(InputAction.CallbackContext context);
+    }
+    public interface IPlayerActions_LookCameraActions
+    {
+        void OnLook(InputAction.CallbackContext context);
     }
 }

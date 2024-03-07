@@ -5,19 +5,20 @@ using UnityEngine;
 
 namespace RPG.GAME
 {
-    public class Player : CharacterBase
+    public class Player : MonoBehaviour
     {
-        
+        public EventHandler<RaycastHit> onSelectTargetInBattle;
         [SerializeField] private CharacterMovement characterMovement;
         [SerializeField] private CameraController cameraController;
-        
-
         private PlayerController inputActions;
+
+        [SerializeField] private GameObject battleScreen;
 
         private void Awake()
         {
             inputActions = new PlayerController();
             inputActions.Enable();
+            inputActions.PlayerActions_Battle.OpenBattleScreen.performed += ctx => OpenBattleScreen();
         }
 
         private void Update()
@@ -33,8 +34,7 @@ namespace RPG.GAME
                 wantsToJump = wantsToJump
             });
 
-            var look = inputActions.PlayerActions_Move.Look.ReadValue<Vector2>();
-
+            var look = inputActions.PlayerActions_LookCamera.Look.ReadValue<Vector2>();
             cameraController.IncrementLookRotation(new Vector2(look.y, look.x));
         }
 
@@ -50,7 +50,7 @@ namespace RPG.GAME
             Ray ray = Camera.main.ScreenPointToRay(mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, 1<<8))
             {
-                GameManager.Instance.currentTarget = hit.collider.GetComponent<CharacterBase>();
+                onSelectTargetInBattle?.Invoke(this, hit);
                 Debug.Log(hit.collider.name);
             }
             else
@@ -59,6 +59,10 @@ namespace RPG.GAME
             }
         }
 
+        void OpenBattleScreen()
+        {
+            battleScreen.SetActive(!battleScreen.activeSelf);
+        }
         
 
         public void BattleInit()
