@@ -62,6 +62,14 @@ namespace RPG.GAME
         {
             return Team;
         }
+
+        public void ResetActions()
+        {
+            foreach (CharacterBase character in Team)
+            {
+                character.action_Released = false;
+            }
+        }
     }
     
 }

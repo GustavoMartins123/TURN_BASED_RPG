@@ -12,7 +12,7 @@ namespace RPG.GAME
     public interface IAction
     {
 
-        void PerformAction(CharacterBase currentSelectedForAction, CharacterBase target, ActionType action);
+        void PerformAction(ActionType action);
         /*public void PerformAction(CharacterBase currentSelectedForAction ,CharacterBase target, ActionType action)
         {
             switch (action)

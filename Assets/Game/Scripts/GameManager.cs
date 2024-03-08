@@ -10,8 +10,6 @@ sealed class GameManager : MonoBehaviour
     public static GameManager Instance;
     [SerializeField] private Player player;
     [SerializeField] private CharacterMovement characterMovement;
-    [SerializeField] private bool playerTurn;
-    public CharacterBase currentTarget, currentSelectedForAction;
     private BattleManager battleManager;
     [SerializeField] private Material twirlMaterial;
     [SerializeField] private GameObject screenDistortion;
@@ -44,26 +42,15 @@ sealed class GameManager : MonoBehaviour
     void Start()
     {
         characterMovement.onEnterInBattle += Player_OnEnterInBattle;
-        player.onSelectTargetInBattle += Player_OnSelectTargetInBattle;
         SpawnObjectsInCircle();
         //twirlMaterial.SetFloat("_RotateSpeed", 0);
         //twirlMaterial.SetFloat("_TwirlStrenght", 0);
     }
 
-
-    private void Update()
-    {
-        /*if(battleManager != null)
-        {
-            DistortionBattleScreen();
-        }*///******Study shaders****** 
-        // Thinking about how to improve this, because it's very heavy and ugly
-    }
-
     void SpawnObjectsInCircle()
     {
-        List<CharacterBase> enemyList = new List<CharacterBase>();
-        for (int i = 0; i < 8; i++)
+        List<CharacterBase> enemyList = new();
+        for (int i = 0; i < 4; i++)
         {
             float angle = i * Mathf.PI * 2f / 10;
 
@@ -74,6 +61,7 @@ sealed class GameManager : MonoBehaviour
             GameObject enemyObject = Instantiate(this.enemy.gameObject, spawnPosition, Quaternion.identity);
             CharacterBase enemy = enemyObject.GetComponent<CharacterBase>();
             enemyList.Add(enemy);
+            enemy.name = $"Inimigo: {i}";
 
             if (i % 4 == 3)
             {
@@ -97,35 +85,22 @@ sealed class GameManager : MonoBehaviour
 
     public void PassTurn()
     {
-        battleManager.PerformAction(currentSelectedForAction, currentTarget, ActionType.None);
+        battleManager.PerformAction(ActionType.None);
     }
 
     public void Attack()
     {
-        battleManager.PerformAction(currentSelectedForAction, currentTarget, ActionType.PhysicalAttack);
+        battleManager.PerformAction(ActionType.PhysicalAttack);
     }
 
     void Player_OnEnterInBattle(object sender, CharacterCollisionEventArgs e)
     {
-        playerTurn = e.playerCharacter.GetHighSpeed().m_Speed >= e.enemyCharacter.GetHighSpeed().m_Speed ? true : false;
-        battleManager = new BattleManager(e, cameraBattle);
+        battleManager = new BattleManager(e, cameraBattle, player);
         player.BattleInit();
-        battleManager.PlaceCharactersOnGrid(playerTurn, grid);
+        battleManager.PlaceCharactersOnGrid(grid);
     }
 
-    //Replace this with a UI action, because now it will be useless, as the camera will move
-    void Player_OnSelectTargetInBattle(object sender, RaycastHit e)
-    {
-        currentTarget = e.collider.GetComponent<CharacterBase>();
-        cameraBattle.target.transform.position = currentTarget.transform.position;
-
-    }
-
-    public bool GetCurrentTurn()
-    {
-        return playerTurn;
-    }
-
+    #region not implemented
     void DistortionBattleScreen()
     {
         time += Time.deltaTime;
@@ -156,4 +131,5 @@ sealed class GameManager : MonoBehaviour
         screenDistortion.SetActive(false);
         cameraDistortion.gameObject.SetActive(false);
     }
+#endregion
 }

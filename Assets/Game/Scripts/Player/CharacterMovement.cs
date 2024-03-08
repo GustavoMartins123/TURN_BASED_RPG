@@ -39,7 +39,7 @@ namespace RPG.GAME
         private Vector3 moveInput;
         private float jumpRequestExpireTime;
 
-        public float jumpSpeed => Mathf.Sqrt(2 * gravity * jumpHeight);
+        public float JumpSpeed => Mathf.Sqrt(2 * gravity * jumpHeight);
 
 
         private void Awake()
@@ -83,7 +83,7 @@ namespace RPG.GAME
 
                 if (Time.time < jumpRequestExpireTime)
                 {
-                    currentVelocity.y = jumpSpeed;
+                    currentVelocity.y = JumpSpeed;
                     jumpRequestExpireTime = 0;
                     motor.ForceUnground();
                 }
@@ -109,8 +109,7 @@ namespace RPG.GAME
         {
             if (hitCollider.CompareTag("Enemy"))
             {
-                Enemy enemyCharacter = hitCollider.GetComponent<Enemy>();
-                if (enemyCharacter != null)
+                if (hitCollider.TryGetComponent<Enemy>(out var enemyCharacter))
                 {
                     onEnterInBattle?.Invoke(this, new CharacterCollisionEventArgs(playerBattle, enemyCharacter));
                 }

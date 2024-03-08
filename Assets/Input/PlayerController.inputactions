@@ -138,10 +138,10 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "OpenBattleScreen",
-                    "type": "Button",
+                    "name": "MoveSelectAction",
+                    "type": "Value",
                     "id": "1c2e2ad8-64ee-43f3-82f2-648f94b22d91",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
@@ -182,15 +182,59 @@
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "",
-                    "id": "48c7172e-47ef-4359-9cf7-fc9322adc62b",
-                    "path": "<Keyboard>/ctrl",
+                    "name": "MoveSelector",
+                    "id": "ab971fa4-7c18-4360-991b-77cc62c2a5eb",
+                    "path": "2DVector",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MoveSelectAction",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "up",
+                    "id": "e9e81ace-bb08-4de6-9d9b-10721f6f234e",
+                    "path": "<Keyboard>/w",
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyBoard",
-                    "action": "OpenBattleScreen",
+                    "action": "MoveSelectAction",
                     "isComposite": false,
-                    "isPartOfComposite": false
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "down",
+                    "id": "2ad7533e-618d-489e-987e-990b25c3f451",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyBoard",
+                    "action": "MoveSelectAction",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "left",
+                    "id": "c6991c2d-20a7-4677-82b3-bda876286760",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyBoard",
+                    "action": "MoveSelectAction",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "right",
+                    "id": "b70c09cf-c2d0-4f74-b8b2-87eff54da124",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyBoard",
+                    "action": "MoveSelectAction",
+                    "isComposite": false,
+                    "isPartOfComposite": true
                 }
             ]
         },
