@@ -6,12 +6,9 @@ namespace RPG.GAME
 {
     public class Enemy : CharacterBase
     {
-
-        // Update is called once per frame
-        void Update()
+        private void Awake()
         {
-        
+            m_Speed = (byte)Random.Range(2, 11);
         }
-
     }
 }

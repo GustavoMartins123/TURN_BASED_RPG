@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2203289835891222423}
   - component: {fileID: 9165361700298278117}
   - component: {fileID: 246796741104417137}
+  - component: {fileID: 6226896701986035137}
   m_Layer: 8
   m_Name: Enemy
   m_TagString: Enemy
@@ -137,4 +138,22 @@ MonoBehaviour:
   m_Speed: 10
   action_Released: 0
   Team: []
-  visualObjects: []
+  outline: {fileID: 6226896701986035137}
+--- !u!114 &6226896701986035137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6289877292328147943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 2
+  outlineColor: {r: 0, g: 0.031424046, b: 1, a: 1}
+  outlineWidth: 0
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []

@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.TextCore.Text;
 
 namespace RPG.GAME
 {
-    public class CharacterBase: MonoBehaviour
+    [RequireComponent(typeof(Outline))]
+    public class CharacterBase : MonoBehaviour
     {
         public string _name;
         public enum TypeOfCharacter
@@ -17,7 +19,10 @@ namespace RPG.GAME
             GOD
         }
 
-        public TypeOfCharacter m_Type;
+        public TypeOfCharacter m_Type { 
+            get { return m_Type; }
+            set { m_Type = value; }
+        }
         public int m_Lvl;
         public int m_Hp;
         public int m_Mp;
@@ -34,6 +39,13 @@ namespace RPG.GAME
         public bool action_Released = false;
 
         public List<CharacterBase> Team = new();
+        public Outline outline;
+
+        public virtual void Start()
+        {
+            outline = GetComponent<Outline>();
+        }
+
         public CharacterBase GetHighSpeed()
         {
             CharacterBase highestSpeedCharacter = null;
@@ -41,17 +53,10 @@ namespace RPG.GAME
 
             foreach (CharacterBase character in Team)
             {
-                if (!character.action_Released)
+                if (!character.action_Released && character.m_Speed > maxSpeed)
                 {
-                    if (character.m_Speed > maxSpeed)
-                    {
-                        maxSpeed = character.m_Speed;
-                        highestSpeedCharacter = character;
-                    }
-                    if(highestSpeedCharacter == null)
-                    {
-                        highestSpeedCharacter = character;
-                    }
+                    maxSpeed = character.m_Speed;
+                    highestSpeedCharacter = character;
                 }
             }
 
@@ -69,6 +74,17 @@ namespace RPG.GAME
             {
                 character.action_Released = false;
             }
+        }
+
+        public void ActivateOutline()
+        {
+            outline.OutlineMode = Outline.Mode.OutlineVisible;
+            outline.OutlineWidth = 8;
+        }
+        public void DeactivateOutline()
+        {
+            outline.OutlineMode = Outline.Mode.OutlineHidden;
+            outline.OutlineWidth = 0;
         }
     }
     

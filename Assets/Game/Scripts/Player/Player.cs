@@ -1,16 +1,18 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
-using static UnityEngine.Rendering.DebugUI.Table;
 
 namespace RPG.GAME
 {
     public class Player : MonoBehaviour
     {
         public EventHandler<RaycastHit> onSelectTargetInBattle;
+        [SerializeField] private EventSystem eventSystem;
         [SerializeField] private CharacterMovement characterMovement;
         [SerializeField] private CameraController cameraController;
         private PlayerController inputActions;
@@ -43,7 +45,7 @@ namespace RPG.GAME
             cameraController.IncrementLookRotation(new Vector2(look.y, look.x));
         }
 
-        private void player_MoveSelectorAction()
+        private void Player_MoveSelectorAction()
         {
             Vector2 move = inputActions.PlayerActions_Battle.MoveSelectAction.ReadValue<Vector2>();
             int directionX = Mathf.FloorToInt(move.x);
@@ -87,6 +89,7 @@ namespace RPG.GAME
             }
             uiSelectorAction.transform.position = uiSelectorAction.transform.parent.position;
             uiSelectorAction.transform.SetAsFirstSibling();
+            
         }
         private int GetCurrentIndexX()
         {
@@ -101,22 +104,13 @@ namespace RPG.GAME
             return -1;
         }
 
-        private void GetSelectedCharacter()
+        void SelectAction()
         {
-            //Battle only
-            //I will switch this for a UI selection
-            /*Vector2 mousePosition = inputActions.PlayerActions_Battle.MousePosition.ReadValue<Vector2>();
-
-            Ray ray = Camera.main.ScreenPointToRay(mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, 1<<8))
-            {
-                onSelectTargetInBattle?.Invoke(this, hit);
-                Debug.Log(hit.collider.name);
-            }
-            else
-            {
-                return;
-            }*/
+            eventSystem.SetSelectedGameObject(uiSelectorAction.transform.parent.gameObject);
+            PointerEventData pointerEventData = new PointerEventData(eventSystem);
+            Button button = uiSelectorAction.GetComponentInParent<Button>();
+            pointerEventData.pressPosition = button.transform.position;
+            ExecuteEvents.Execute(uiSelectorAction, pointerEventData, ExecuteEvents.pointerClickHandler);
         }
 
         
@@ -124,22 +118,32 @@ namespace RPG.GAME
         public void BattleInit()
         {
             inputActions.PlayerActions_Battle.Enable();
-            inputActions.PlayerActions_Battle.MouseSelect.performed += ctx => GetSelectedCharacter();
             inputActions.PlayerActions_Move.Disable();
             battleScreen.SetActive(true);
-            inputActions.PlayerActions_Battle.MoveSelectAction.performed += ctx => player_MoveSelectorAction();
+            inputActions.PlayerActions_Battle.MoveSelectAction.performed += ctx => Player_MoveSelectorAction();
+            inputActions.PlayerActions_Battle.SelectAction.performed += ctx => SelectAction();
             uiSelectorAction.transform.SetParent(uiActions[0].transform);
         }
 
         public void BattleOver()
         {
             inputActions.PlayerActions_Battle.Disable();
-            inputActions.PlayerActions_Battle.MouseSelect.performed -= ctx => GetSelectedCharacter();
             inputActions.PlayerActions_Move.Enable();
             battleScreen.SetActive(false);
-            inputActions.PlayerActions_Battle.MoveSelectAction.performed -= ctx => player_MoveSelectorAction();
         }
 
+        public void PlayerTurnOrEnemy(bool activate)
+        {
+            battleScreen.SetActive(activate);
+            if (!activate)
+            {
+                inputActions.PlayerActions_Battle.Disable();
+            }
+            else
+            {
+                inputActions.PlayerActions_Battle.Enable();
+            }
+        }
     }
 
     

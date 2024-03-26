@@ -167,6 +167,15 @@ public partial class @PlayerController: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""SelectAction"",
+                    ""type"": ""Button"",
+                    ""id"": ""1d20c23e-4ea1-4719-ab4b-62a44a64508b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -257,6 +266,17 @@ public partial class @PlayerController: IInputActionCollection2, IDisposable
                     ""action"": ""MoveSelectAction"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2df288ba-5056-400a-93fa-df3aa94779a6"",
+                    ""path"": ""<Keyboard>/enter"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyBoard"",
+                    ""action"": ""SelectAction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -322,6 +342,7 @@ public partial class @PlayerController: IInputActionCollection2, IDisposable
         m_PlayerActions_Battle_MouseSelect = m_PlayerActions_Battle.FindAction("MouseSelect", throwIfNotFound: true);
         m_PlayerActions_Battle_MousePosition = m_PlayerActions_Battle.FindAction("MousePosition", throwIfNotFound: true);
         m_PlayerActions_Battle_MoveSelectAction = m_PlayerActions_Battle.FindAction("MoveSelectAction", throwIfNotFound: true);
+        m_PlayerActions_Battle_SelectAction = m_PlayerActions_Battle.FindAction("SelectAction", throwIfNotFound: true);
         // PlayerActions_LookCamera
         m_PlayerActions_LookCamera = asset.FindActionMap("PlayerActions_LookCamera", throwIfNotFound: true);
         m_PlayerActions_LookCamera_Look = m_PlayerActions_LookCamera.FindAction("Look", throwIfNotFound: true);
@@ -443,6 +464,7 @@ public partial class @PlayerController: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerActions_Battle_MouseSelect;
     private readonly InputAction m_PlayerActions_Battle_MousePosition;
     private readonly InputAction m_PlayerActions_Battle_MoveSelectAction;
+    private readonly InputAction m_PlayerActions_Battle_SelectAction;
     public struct PlayerActions_BattleActions
     {
         private @PlayerController m_Wrapper;
@@ -450,6 +472,7 @@ public partial class @PlayerController: IInputActionCollection2, IDisposable
         public InputAction @MouseSelect => m_Wrapper.m_PlayerActions_Battle_MouseSelect;
         public InputAction @MousePosition => m_Wrapper.m_PlayerActions_Battle_MousePosition;
         public InputAction @MoveSelectAction => m_Wrapper.m_PlayerActions_Battle_MoveSelectAction;
+        public InputAction @SelectAction => m_Wrapper.m_PlayerActions_Battle_SelectAction;
         public InputActionMap Get() { return m_Wrapper.m_PlayerActions_Battle; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -468,6 +491,9 @@ public partial class @PlayerController: IInputActionCollection2, IDisposable
             @MoveSelectAction.started += instance.OnMoveSelectAction;
             @MoveSelectAction.performed += instance.OnMoveSelectAction;
             @MoveSelectAction.canceled += instance.OnMoveSelectAction;
+            @SelectAction.started += instance.OnSelectAction;
+            @SelectAction.performed += instance.OnSelectAction;
+            @SelectAction.canceled += instance.OnSelectAction;
         }
 
         private void UnregisterCallbacks(IPlayerActions_BattleActions instance)
@@ -481,6 +507,9 @@ public partial class @PlayerController: IInputActionCollection2, IDisposable
             @MoveSelectAction.started -= instance.OnMoveSelectAction;
             @MoveSelectAction.performed -= instance.OnMoveSelectAction;
             @MoveSelectAction.canceled -= instance.OnMoveSelectAction;
+            @SelectAction.started -= instance.OnSelectAction;
+            @SelectAction.performed -= instance.OnSelectAction;
+            @SelectAction.canceled -= instance.OnSelectAction;
         }
 
         public void RemoveCallbacks(IPlayerActions_BattleActions instance)
@@ -572,6 +601,7 @@ public partial class @PlayerController: IInputActionCollection2, IDisposable
         void OnMouseSelect(InputAction.CallbackContext context);
         void OnMousePosition(InputAction.CallbackContext context);
         void OnMoveSelectAction(InputAction.CallbackContext context);
+        void OnSelectAction(InputAction.CallbackContext context);
     }
     public interface IPlayerActions_LookCameraActions
     {

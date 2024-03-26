@@ -1,4 +1,3 @@
-using Cinemachine;
 using RPG.GAME;
 using System;
 using System.Collections;
@@ -13,19 +12,17 @@ sealed class GameManager : MonoBehaviour
     private BattleManager battleManager;
     [SerializeField] private Material twirlMaterial;
     [SerializeField] private GameObject screenDistortion;
-    /// <summary>
-    /// ///////////////////////////////////////////////////////
-    /// </summary>
-    [SerializeField] private CharacterBase enemy;/// <summary>
-    /// //////////////////////////////////////////////////////
-    /// </summary>
+    //Enemy instance for tests
+    [SerializeField] private CharacterBase enemy;
+    public float radius = 5f;
+
     [SerializeField] private Camera cameraDistortion;
-    [SerializeField] private CameraController cameraBattle; //Work to set the right target and stay in a good position, it will probably be a targetcamera like the one on the regular player
+    [SerializeField] private CameraController cameraBattle;
     float time = 0;
     [SerializeField] private Transform[] grid;
 
     //Test
-    public float radius = 5f;
+
 
     private void Awake()
     {
@@ -93,11 +90,18 @@ sealed class GameManager : MonoBehaviour
         battleManager.PerformAction(ActionType.PhysicalAttack);
     }
 
-    void Player_OnEnterInBattle(object sender, CharacterCollisionEventArgs e)
+    private void Player_OnEnterInBattle(object sender, CharacterCollisionEventArgs e)
     {
         battleManager = new BattleManager(e, cameraBattle, player);
-        player.BattleInit();
         battleManager.PlaceCharactersOnGrid(grid);
+        battleManager.onTurnIsToEnemy += StartEnemyTurn;
+    }
+
+    private void StartEnemyTurn(object sender, EventArgs e)
+    {
+        Debug.Log("Atacando");
+        StartCoroutine(battleManager.CurrentSelectedForActionIsEnemy());
+        player.PlayerTurnOrEnemy(false);
     }
 
     #region not implemented

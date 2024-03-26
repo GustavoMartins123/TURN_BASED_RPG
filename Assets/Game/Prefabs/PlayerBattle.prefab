@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5980382513583319992}
   - component: {fileID: 8728932493762521338}
   - component: {fileID: 5295393219149036591}
+  - component: {fileID: 3858976104692125163}
   m_Layer: 0
   m_Name: PlayerBattle
   m_TagString: Untagged
@@ -112,7 +113,25 @@ MonoBehaviour:
   m_Resilience: 0
   m_Speed: 20
   action_Released: 0
-  Team: []
-  visualObjects:
+  Team:
   - {fileID: 5295393219149036591}
-  - {fileID: 246796741104417137, guid: 45ce95a2049809741a5353b1377067b3, type: 3}
+  - {fileID: 0}
+  outline: {fileID: 3858976104692125163}
+--- !u!114 &3858976104692125163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5154618041493568481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 2
+  outlineColor: {r: 1, g: 0.43237165, b: 0, a: 1}
+  outlineWidth: 0
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []

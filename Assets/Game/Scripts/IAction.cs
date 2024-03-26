@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace RPG.GAME
 {
     public enum ActionType
