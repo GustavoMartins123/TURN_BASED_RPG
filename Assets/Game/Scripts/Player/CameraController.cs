@@ -14,7 +14,7 @@ namespace RPG.GAME
         [SerializeField] private float targetHeight = 1.9f;
         [SerializeField] private Vector2 xRotationRange = new Vector2(-70, 70);
         [SerializeField] private CinemachineVirtualCamera virtualCamera;
-        bool inBatlte;
+        public bool inBatlte;
 
 
         private Vector2 targetLook;
@@ -22,10 +22,10 @@ namespace RPG.GAME
         [SerializeField] float sensitivity = 1f;
         public Quaternion lookRotation => target.rotation;
 
-        private void Start()
+        /*private void Start()
         {
             characterMovement.onEnterInBattle += Player_OnEnterInBattle;
-        }
+        }*/
 
         private void LateUpdate()
         {
@@ -37,9 +37,8 @@ namespace RPG.GAME
             
         }
 
-        void Player_OnEnterInBattle(object sender, CharacterCollisionEventArgs e)
+        void Player_OnEnterInBattle(CharacterCollisionEventArgs e)
         {
-            inBatlte = true;
             //virtualCamera.m_LookAt = target;
             //Create a new camera for battle or change properties in editor
             

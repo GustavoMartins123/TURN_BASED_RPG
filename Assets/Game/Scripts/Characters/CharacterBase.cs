@@ -57,6 +57,7 @@ namespace RPG.GAME
                 {
                     maxSpeed = character.m_Speed;
                     highestSpeedCharacter = character;
+                    break;
                 }
             }
 

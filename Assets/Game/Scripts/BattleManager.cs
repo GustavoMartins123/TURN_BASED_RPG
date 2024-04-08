@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace RPG.GAME
 {
     sealed class BattleManager : IAction
     {
-        public EventHandler onTurnIsToEnemy;
+        public Action onTurnIsToEnemy;
         private CharacterBase currentSelectedForAction, currentTarget;
         private readonly Player player;
         private readonly CharacterCollisionEventArgs characters;
@@ -23,32 +22,23 @@ namespace RPG.GAME
 
         public void PlaceCharactersOnGrid(Transform[] grid)
         {
-            int playerCount = characters.playerCharacter.Team.Count;
-            int enemyStartIndex = grid.Length / 2;
-
-
-            for (int i = 0; i < playerCount; i++)
+            
+            for (int i = 0; i <= 4; i++)
             {
-                characters.playerCharacter.Team[i].transform.position = grid[i].position;
+                if (i < characters.playerCharacter.Team.Count)
+                {
+                    characters.playerCharacter.Team[i].transform.position = grid[i].position;
+                }
+                if (i < characters.enemyCharacter.Team.Count)
+                {
+                    characters.enemyCharacter.Team[i].transform.position = grid[i + 4].position;
+                }
             }
-            for (int j = 0; j < characters.enemyCharacter.Team.Count; j++)
-            {
-                int enemyGridIndex = enemyStartIndex + j;
-                characters.enemyCharacter.Team[j].transform.position = grid[enemyGridIndex].position;
-            }
-
             currentSelectedForAction = characters.playerCharacter.GetHighSpeed().m_Speed >= characters.enemyCharacter.m_Speed ? characters.playerCharacter.GetHighSpeed() : characters.enemyCharacter.GetHighSpeed();
 
             cameraBattle.target.position = currentSelectedForAction.transform.position;
 
-            if (characters.enemyCharacter.GetTeam().Contains(currentSelectedForAction))
-            {
-                currentTarget = characters.playerCharacter.GetHighSpeed();
-            }
-            else
-            {
-                currentTarget = characters.enemyCharacter.GetHighSpeed();
-            }
+            currentTarget = characters.enemyCharacter.GetTeam().Contains(currentSelectedForAction) ? characters.playerCharacter.GetHighSpeed() : characters.enemyCharacter.GetHighSpeed();
             currentTarget.ActivateOutline();
         }
 
@@ -57,7 +47,7 @@ namespace RPG.GAME
             switch (action)
             {
                 case ActionType.PhysicalAttack:
-                    Debug.Log($"O {currentSelectedForAction.name} está atacando {currentTarget}");
+                    Debug.Log($"O {currentSelectedForAction.name} está atacando {currentTarget.name}");
                     PassTurn();
                     break;
                 case ActionType.MagicalAttack:
@@ -91,7 +81,7 @@ namespace RPG.GAME
                     currentSelectedForAction = character.GetHighSpeed();
                     if (characters.enemyCharacter.GetTeam().Contains(currentSelectedForAction))
                     {
-                        onTurnIsToEnemy.Invoke(this, EventArgs.Empty);
+                        onTurnIsToEnemy.Invoke();
                     }
                     break;
                 }
@@ -107,7 +97,7 @@ namespace RPG.GAME
                 if (characters.playerCharacter.GetTeam().Contains(currentAttacking))
                 {
                     nextTeam = characters.enemyCharacter.GetHighSpeed();
-                    onTurnIsToEnemy.Invoke(this, EventArgs.Empty);
+                    onTurnIsToEnemy.Invoke();
                 }
                 else
                 {

@@ -90,14 +90,14 @@ sealed class GameManager : MonoBehaviour
         battleManager.PerformAction(ActionType.PhysicalAttack);
     }
 
-    private void Player_OnEnterInBattle(object sender, CharacterCollisionEventArgs e)
+    private void Player_OnEnterInBattle(CharacterCollisionEventArgs e)
     {
         battleManager = new BattleManager(e, cameraBattle, player);
         battleManager.PlaceCharactersOnGrid(grid);
         battleManager.onTurnIsToEnemy += StartEnemyTurn;
     }
 
-    private void StartEnemyTurn(object sender, EventArgs e)
+    private void StartEnemyTurn()
     {
         Debug.Log("Atacando");
         StartCoroutine(battleManager.CurrentSelectedForActionIsEnemy());

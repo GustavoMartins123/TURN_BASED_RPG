@@ -1,17 +1,10 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
 
 namespace RPG.GAME
 {
     public class Player : MonoBehaviour
     {
-        public EventHandler<RaycastHit> onSelectTargetInBattle;
         [SerializeField] private EventSystem eventSystem;
         [SerializeField] private CharacterMovement characterMovement;
         [SerializeField] private CameraController cameraController;
@@ -26,6 +19,11 @@ namespace RPG.GAME
             inputActions = new PlayerController();
             inputActions.PlayerActions_Move.Enable();
             inputActions.PlayerActions_LookCamera.Enable();
+        }
+
+        private void Start()
+        {
+            battleScreen.SetActive(false);
         }
 
         private void Update()
@@ -108,8 +106,7 @@ namespace RPG.GAME
         {
             eventSystem.SetSelectedGameObject(uiSelectorAction.transform.parent.gameObject);
             PointerEventData pointerEventData = new PointerEventData(eventSystem);
-            Button button = uiSelectorAction.GetComponentInParent<Button>();
-            pointerEventData.pressPosition = button.transform.position;
+            pointerEventData.pressPosition = uiSelectorAction.transform.position;
             ExecuteEvents.Execute(uiSelectorAction, pointerEventData, ExecuteEvents.pointerClickHandler);
         }
 
@@ -120,9 +117,12 @@ namespace RPG.GAME
             inputActions.PlayerActions_Battle.Enable();
             inputActions.PlayerActions_Move.Disable();
             battleScreen.SetActive(true);
+
+
             inputActions.PlayerActions_Battle.MoveSelectAction.performed += ctx => Player_MoveSelectorAction();
             inputActions.PlayerActions_Battle.SelectAction.performed += ctx => SelectAction();
-            uiSelectorAction.transform.SetParent(uiActions[0].transform);
+            cameraController.inBatlte = true;
+            //uiSelectorAction.transform.SetParent(uiActions[0].transform);
         }
 
         public void BattleOver()

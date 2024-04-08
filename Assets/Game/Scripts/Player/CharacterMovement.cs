@@ -14,13 +14,12 @@ namespace RPG.GAME
         public bool wantsToJump;
     }
     [RequireComponent(typeof(KinematicCharacterMotor))]
-    public class CharacterMovement : MonoBehaviour, ICharacterController
-    {
-        public EventHandler<CharacterCollisionEventArgs> onEnterInBattle;
+        public class CharacterMovement : MonoBehaviour, ICharacterController
+        {
+            public Action<CharacterCollisionEventArgs> onEnterInBattle;
         public KinematicCharacterMotor motor;
         [SerializeField] private Player player;
         [SerializeField] private PlayerBattle playerBattle;
-        [SerializeField] private LayerMask enemyLayer;
 
         [Header("Ground Movement")]
         public float maxSpeed, acceleration, rotationSpeed;
@@ -107,11 +106,12 @@ namespace RPG.GAME
 
         public void OnMovementHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport)
         {
-            if (hitCollider.CompareTag("Enemy"))
+            if (hitCollider.gameObject.layer == 8)
             {
-                if (hitCollider.TryGetComponent<Enemy>(out var enemyCharacter))
+                Enemy enemy = hitCollider.gameObject.GetComponent<Enemy>();
+                if (enemy != null)
                 {
-                    onEnterInBattle?.Invoke(this, new CharacterCollisionEventArgs(playerBattle, enemyCharacter));
+                    onEnterInBattle?.Invoke(new CharacterCollisionEventArgs(playerBattle, enemy));
                 }
             }
         }
