@@ -1,9 +1,6 @@
 using KinematicCharacterController;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
 
 namespace RPG.GAME
 {
@@ -14,31 +11,28 @@ namespace RPG.GAME
         public bool wantsToJump;
     }
     [RequireComponent(typeof(KinematicCharacterMotor))]
-        public class CharacterMovement : MonoBehaviour, ICharacterController
-        {
-            public Action<CharacterCollisionEventArgs> onEnterInBattle;
-        public KinematicCharacterMotor motor;
+    public class CharacterMovement : MonoBehaviour, ICharacterController
+    {
+        public Action<CharacterCollisionEventArgs> onEnterInBattle;
+        public float JumpSpeed => Mathf.Sqrt(2 * gravity * jumpHeight);
+        private Vector3 moveInput;
+        private float jumpRequestExpireTime;
+        [SerializeField] private KinematicCharacterMotor motor;
         [SerializeField] private Player player;
         [SerializeField] private PlayerBattle playerBattle;
 
         [Header("Ground Movement")]
-        public float maxSpeed, acceleration, rotationSpeed;
-        public float gravity = 30f;
-        public float jumpHeight = 1.5f;
+        [SerializeField] private float maxSpeed, acceleration, rotationSpeed;
+        [SerializeField] private float gravity = 30f;
+        [SerializeField] private float jumpHeight = 1.5f;
         [Range(0.01f, 0.3f)]
-        public float jumpRequestDuration = 0.1f;
+        [SerializeField] private float jumpRequestDuration = 0.1f;
 
         [Header("Air Movement")]
-        public float airMaxSpeed = 3f;
-        public float airAcceleration = 20f;
+        [SerializeField] private float airMaxSpeed = 3f;
+        [SerializeField] private float airAcceleration = 20f;
         [Min(0)]
-        public float drag = 0.5f;
-
-
-        private Vector3 moveInput;
-        private float jumpRequestExpireTime;
-
-        public float JumpSpeed => Mathf.Sqrt(2 * gravity * jumpHeight);
+        [SerializeField] private float drag = 0.5f;
 
 
         private void Awake()
@@ -49,7 +43,7 @@ namespace RPG.GAME
         public void SetInput(in CharacterMovementInput input)
         {
             moveInput = Vector3.zero;
-            if(input.moveInput != Vector2.zero)
+            if (input.moveInput != Vector2.zero)
             {
                 moveInput = new Vector3(input.moveInput.x, 0, input.moveInput.y);
                 moveInput = input.lookRotation * moveInput;
@@ -57,7 +51,7 @@ namespace RPG.GAME
                 moveInput.Normalize();
             }
 
-            if(input.wantsToJump)
+            if (input.wantsToJump)
             {
                 jumpRequestExpireTime = Time.time + jumpRequestDuration;
 
@@ -91,7 +85,7 @@ namespace RPG.GAME
             {
                 var targetVelocityXZ = new Vector2(moveInput.x, moveInput.z) * airMaxSpeed;
                 var currentVelocityXZ = new Vector2(currentVelocity.x, currentVelocity.z);
-                    currentVelocityXZ = Vector2.MoveTowards(currentVelocityXZ, targetVelocityXZ, airAcceleration * Time.deltaTime);
+                currentVelocityXZ = Vector2.MoveTowards(currentVelocityXZ, targetVelocityXZ, airAcceleration * Time.deltaTime);
                 currentVelocity.x = ApplyDrag(currentVelocityXZ.x, drag, deltaTime);
                 currentVelocity.z = ApplyDrag(currentVelocityXZ.y, drag, deltaTime);
 
@@ -99,7 +93,7 @@ namespace RPG.GAME
             }
         }
 
-        public float ApplyDrag(float velocity, float drag, float deltaTime)
+        private float ApplyDrag(float velocity, float drag, float deltaTime)
         {
             return velocity * (1f / (1f + drag * deltaTime));
         }
@@ -120,12 +114,12 @@ namespace RPG.GAME
 
         public void AfterCharacterUpdate(float deltaTime)
         {
-            
+
         }
 
         public void BeforeCharacterUpdate(float deltaTime)
         {
-            
+
         }
 
         public bool IsColliderValidForCollisions(Collider coll)
@@ -135,22 +129,22 @@ namespace RPG.GAME
 
         public void OnDiscreteCollisionDetected(Collider hitCollider)
         {
-            
+
         }
 
         public void OnGroundHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport)
         {
-            
+
         }
 
         public void PostGroundingUpdate(float deltaTime)
         {
-            
+
         }
 
         public void ProcessHitStabilityReport(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, Vector3 atCharacterPosition, Quaternion atCharacterRotation, ref HitStabilityReport hitStabilityReport)
         {
-            
+
         }
 
         #endregion

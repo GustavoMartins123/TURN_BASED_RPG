@@ -5,11 +5,10 @@ namespace RPG.GAME
 {
     public class Player : MonoBehaviour
     {
+        private PlayerController inputActions;
         [SerializeField] private EventSystem eventSystem;
         [SerializeField] private CharacterMovement characterMovement;
         [SerializeField] private CameraController cameraController;
-        private PlayerController inputActions;
-
         [SerializeField] private GameObject battleScreen, uiSelectorAction;
         [SerializeField] private GameObject[] uiActions;
         [SerializeField] int currentIndexX = 0, currentIndexY = 0;
@@ -102,7 +101,7 @@ namespace RPG.GAME
             return -1;
         }
 
-        void SelectAction()
+        private void SelectAction()
         {
             eventSystem.SetSelectedGameObject(uiSelectorAction.transform.parent.gameObject);
             PointerEventData pointerEventData = new PointerEventData(eventSystem);
@@ -121,8 +120,7 @@ namespace RPG.GAME
 
             inputActions.PlayerActions_Battle.MoveSelectAction.performed += ctx => Player_MoveSelectorAction();
             inputActions.PlayerActions_Battle.SelectAction.performed += ctx => SelectAction();
-            cameraController.inBatlte = true;
-            //uiSelectorAction.transform.SetParent(uiActions[0].transform);
+            cameraController.SetInBattle(true);
         }
 
         public void BattleOver()

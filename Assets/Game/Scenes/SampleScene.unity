@@ -2109,6 +2109,7 @@ MonoBehaviour:
   radius: 20
   cameraDistortion: {fileID: 766840574}
   cameraBattle: {fileID: 648953392}
+  time: 0
   grid:
   - {fileID: 999130887}
   - {fileID: 510523853}

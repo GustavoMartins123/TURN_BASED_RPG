@@ -1,50 +1,104 @@
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
 
 namespace RPG.GAME
 {
+    public enum TypeOfCharacter
+    {
+        HUMAN,
+        MONSTER,
+        ANGEL,
+        DEMON,
+        GOD
+    }
     [RequireComponent(typeof(Outline))]
     public class CharacterBase : MonoBehaviour
     {
-        public string _name;
-        public enum TypeOfCharacter
+        [SerializeField] private TypeOfCharacter _type;
+        public TypeOfCharacter Type { 
+            get { return _type; }
+        }
+        [SerializeField] private string _name;
+        public string Name
         {
-            HUMAN,
-            MONSTER,
-            ANGEL,
-            DEMON,
-            GOD
+            get { return _name; }
         }
-
-        public TypeOfCharacter m_Type { 
-            get { return m_Type; }
-            set { m_Type = value; }
-        }
-        public int m_Lvl;
-        public int m_Hp;
-        public int m_Mp;
-        public int m_Dmg;
-        public int m_CriticalDmg;
-        public int m_Attack;
-        public int m_SkillMultiplyer;
-        public int m_Pdf;
-        public int m_Mdf;
-        public byte m_Strenght;
-        public byte m_Intelligence;
-        public byte m_Resilience;
-        public byte m_Speed;
-        public bool action_Released = false;
-
-        public List<CharacterBase> Team = new();
-        public Outline outline;
-
-        public virtual void Start()
+        [SerializeField] private int m_Level;
+        public int Level
         {
-            outline = GetComponent<Outline>();
+            get { return m_Level; }
         }
+        [SerializeField] private int m_Hp;
+        public int Hp
+        {
+            get { return m_Hp; }
+            set { m_Hp = value; }
+        }
+        [SerializeField] private int m_Mp;
+        public int Mp
+        {
+            get { return m_Mp; }
+        }
+        [SerializeField] private int m_Attack;
+        public int Attack
+        {
+            get { return m_Attack; }
+        }
+        [SerializeField] private int m_SkillMultiplyer;
+        public int SkillMultiplyer
+        {
+            get { return m_SkillMultiplyer; }
+        }
+        [SerializeField] private int m_PhysicDef;
+        public int PhysicDef
+        {
+            get { return m_PhysicDef; }
+        }
+        [SerializeField] private int m_MagicDef;
+        public int MagicDef
+        {
+            get { return m_MagicDef; }
+        }
+        [SerializeField] private int m_Damage;
+        public int Damage
+        {
+            get { return m_Damage; }
+            set { m_Damage = value; }
+        }
+        [SerializeField] private byte m_Strenght;
+        public byte Strenght
+        {
+            get { return m_Strenght; }
+        }
+        [SerializeField] private byte m_Intelligence;
+        public byte Intelligence
+        {
+            get { return m_Intelligence; }
+        }
+        [SerializeField] private byte m_Resilience;
+        public byte Resilience
+        {
+            get { return m_Resilience; }
+        }
+        [SerializeField] private byte m_Speed;
+        public byte Speed
+        {
+            get { return m_Speed; }
+        }
+        [SerializeField] private float m_CriticalDmg;
+        public float CriticalDmg
+        {
+            get { return m_CriticalDmg; }
+        }
+        private bool _actionReleased = false;
+        public bool ActionReleased
+        {
+            get { return _actionReleased;}
+            set { _actionReleased = value;}
+        }
+
+        [SerializeField] private List<CharacterBase> Team = new();
+        [SerializeField] private Outline outline;
 
         public CharacterBase GetHighSpeed()
         {
@@ -53,11 +107,10 @@ namespace RPG.GAME
 
             foreach (CharacterBase character in Team)
             {
-                if (!character.action_Released && character.m_Speed > maxSpeed)
+                if (!character.ActionReleased && character.Speed > maxSpeed)
                 {
-                    maxSpeed = character.m_Speed;
+                    maxSpeed = character.Speed;
                     highestSpeedCharacter = character;
-                    break;
                 }
             }
 
@@ -73,19 +126,14 @@ namespace RPG.GAME
         {
             foreach (CharacterBase character in Team)
             {
-                character.action_Released = false;
+                character.ActionReleased = false;
             }
         }
 
-        public void ActivateOutline()
+        public void OutlineChangeVisibility(bool visibility)
         {
-            outline.OutlineMode = Outline.Mode.OutlineVisible;
-            outline.OutlineWidth = 8;
-        }
-        public void DeactivateOutline()
-        {
-            outline.OutlineMode = Outline.Mode.OutlineHidden;
-            outline.OutlineWidth = 0;
+            outline.OutlineMode = visibility? Outline.Mode.OutlineVisible : Outline.Mode.OutlineHidden;
+            outline.OutlineWidth = visibility? 8 : 0;
         }
     }
     

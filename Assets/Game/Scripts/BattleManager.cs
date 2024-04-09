@@ -25,21 +25,21 @@ namespace RPG.GAME
             
             for (int i = 0; i <= 4; i++)
             {
-                if (i < characters.playerCharacter.Team.Count)
+                if (i < characters.playerCharacter.GetTeam().Count)
                 {
-                    characters.playerCharacter.Team[i].transform.position = grid[i].position;
+                    characters.playerCharacter.GetTeam()[i].transform.position = grid[i].position;
                 }
-                if (i < characters.enemyCharacter.Team.Count)
+                if (i < characters.enemyCharacter.GetTeam().Count)
                 {
-                    characters.enemyCharacter.Team[i].transform.position = grid[i + 4].position;
+                    characters.enemyCharacter.GetTeam()[i].transform.position = grid[i + 4].position;
                 }
             }
-            currentSelectedForAction = characters.playerCharacter.GetHighSpeed().m_Speed >= characters.enemyCharacter.m_Speed ? characters.playerCharacter.GetHighSpeed() : characters.enemyCharacter.GetHighSpeed();
+            currentSelectedForAction = characters.playerCharacter.GetHighSpeed().Speed >= characters.enemyCharacter.Speed ? characters.playerCharacter.GetHighSpeed() : characters.enemyCharacter.GetHighSpeed();
 
-            cameraBattle.target.position = currentSelectedForAction.transform.position;
+            cameraBattle.SetTarget(currentSelectedForAction.transform.position);
 
             currentTarget = characters.enemyCharacter.GetTeam().Contains(currentSelectedForAction) ? characters.playerCharacter.GetHighSpeed() : characters.enemyCharacter.GetHighSpeed();
-            currentTarget.ActivateOutline();
+            currentTarget.OutlineChangeVisibility(true);
         }
 
         public void PerformAction(ActionType action)
@@ -48,6 +48,9 @@ namespace RPG.GAME
             {
                 case ActionType.PhysicalAttack:
                     Debug.Log($"O {currentSelectedForAction.name} está atacando {currentTarget.name}");
+                    //Working
+                    currentSelectedForAction.Damage = Mathf.Max(Mathf.RoundToInt(currentSelectedForAction.Attack - (currentTarget.PhysicDef / 2) + UnityEngine.Random.Range(-3, 3) + (currentSelectedForAction.Strenght/5) - (currentTarget.Resilience/7)), 1);
+                    currentTarget.Hp -= currentSelectedForAction.Damage;
                     PassTurn();
                     break;
                 case ActionType.MagicalAttack:
@@ -66,16 +69,16 @@ namespace RPG.GAME
         private void PassTurn()
         {
             VerifyCurrentTargetActions(currentSelectedForAction);
-            cameraBattle.target.transform.position = currentSelectedForAction.transform.position;
+            cameraBattle.SetTarget(currentSelectedForAction.transform.position);
         }
         private void VerifyCurrentTargetActions(CharacterBase currentAttacking)
         {
-            currentAttacking.action_Released = true;
+            currentAttacking.ActionReleased = true;
             bool allActionsReleased = true;
 
             foreach (CharacterBase character in currentAttacking.GetTeam())
             {
-                if (!character.action_Released)
+                if (!character.ActionReleased)
                 {
                     allActionsReleased = false;
                     currentSelectedForAction = character.GetHighSpeed();
@@ -90,9 +93,9 @@ namespace RPG.GAME
             if (allActionsReleased)
             {
                 currentAttacking.ResetActions();
-                currentTarget.DeactivateOutline();
+                currentTarget.OutlineChangeVisibility(false);
                 currentTarget = currentAttacking.GetHighSpeed();
-                currentTarget.ActivateOutline();
+                currentTarget.OutlineChangeVisibility(true);
                 CharacterBase nextTeam;
                 if (characters.playerCharacter.GetTeam().Contains(currentAttacking))
                 {

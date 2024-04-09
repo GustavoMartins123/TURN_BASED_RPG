@@ -7,22 +7,19 @@ using UnityEngine;
 sealed class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
+    private BattleManager battleManager;
     [SerializeField] private Player player;
     [SerializeField] private CharacterMovement characterMovement;
-    private BattleManager battleManager;
     [SerializeField] private Material twirlMaterial;
     [SerializeField] private GameObject screenDistortion;
     //Enemy instance for tests
     [SerializeField] private CharacterBase enemy;
-    public float radius = 5f;
+    [SerializeField] private float radius = 5f;
 
     [SerializeField] private Camera cameraDistortion;
     [SerializeField] private CameraController cameraBattle;
-    float time = 0;
+    [SerializeField] private float time = 0;
     [SerializeField] private Transform[] grid;
-
-    //Test
-
 
     private void Awake()
     {
@@ -36,7 +33,7 @@ sealed class GameManager : MonoBehaviour
         }
     }
 
-    void Start()
+    private void Start()
     {
         characterMovement.onEnterInBattle += Player_OnEnterInBattle;
         SpawnObjectsInCircle();
@@ -44,7 +41,7 @@ sealed class GameManager : MonoBehaviour
         //twirlMaterial.SetFloat("_TwirlStrenght", 0);
     }
 
-    void SpawnObjectsInCircle()
+    private void SpawnObjectsInCircle()
     {
         List<CharacterBase> enemyList = new();
         for (int i = 0; i < 4; i++)
@@ -65,15 +62,15 @@ sealed class GameManager : MonoBehaviour
                 for (int j = 0; j < 4; j++)
                 {
                     int index = (i - j) % enemyList.Count;
-                    enemyList[i].Team.Add(enemyList[index]);
+                    enemyList[i].GetTeam().Add(enemyList[index]);
                     
                 }
-                enemyList[i].Team.Reverse();
+                enemyList[i].GetTeam().Reverse();
                 for (int k = 0; k < 3; k++)
                 {
                     int previousIndex = (i - k - 1) % enemyList.Count;
-                    enemyList[previousIndex].Team.Clear();
-                    enemyList[previousIndex].Team.AddRange(enemyList[i].Team);
+                    enemyList[previousIndex].GetTeam().Clear();
+                    enemyList[previousIndex].GetTeam().AddRange(enemyList[i].GetTeam());
                 }
             }
 
@@ -99,7 +96,6 @@ sealed class GameManager : MonoBehaviour
 
     private void StartEnemyTurn()
     {
-        Debug.Log("Atacando");
         StartCoroutine(battleManager.CurrentSelectedForActionIsEnemy());
         player.PlayerTurnOrEnemy(false);
     }
